@@ -1,42 +1,42 @@
 <?php
-include 'conn.php';
-if(isset($_POST['submit']))
-{
-	
-	$uname=$_POST['username'];
-	$psswrd=$_POST['password'];
-	$sql = "SELECT * FROM user_registration where username='$uname' and password='$psswrd'";
-	$result = mysqli_query($conn, $sql);
+session_start(); 
 
-	if (mysqli_num_rows($result) > 0)
-	 {
-  			header("location:welcome.php")	;
-	 } 
-	else
-	{
-			header("location:error.php")	;
-	}
- 	 
 
-	mysqli_close($conn);
+$validUsername = "admin";
+$validPassword = "password";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    if ($username === $validUsername && $password === $validPassword) {
+        // Store user info in session
+        $_SESSION['username'] = $username;
+        $_SESSION['loggedin'] = true;
+
+        // Redirect to a protected page
+        header("Location: homepage.php");
+        exit();
+    } else {
+        $error = "Invalid username or password!";
+    }
 }
-else
-{
 ?>
+
+<!DOCTYPE html>
 <html>
-	<body>
-	<center>
-		<form action="" method="post">
-		Username:
-		<input type="textbox" name="username"><br>
-		Password:
-		<input type="textbox" name="password"><br>
-		<a href="registration.php">New User?Sign Up</a><br>
-		<input type="submit" name="submit" value="Submit"><br>
-	</form>
-	</center>
-	</body>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <form method="POST" action="">
+        <h2>Login</h2>
+        <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+        <label for="username">Username:</label>
+        <input type="text" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
 </html>
-<?php
-}
-?>
